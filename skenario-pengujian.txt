@@ -1,0 +1,33 @@
+StoryRepositoryTest
+a. Ketika register berhasil
+	1. Memastikan bahwa nilai actualResult tidak null
+	2. Memastikan bahwa nilai expectedResult.message sama dengan actualResult.message
+b. Ketika login berhasil
+	1. Memastikan bahwa nilai actualResult tidak null
+	2. Memastikan bahwa nilai expectedResult.message sama dengan actualResult.message
+c. Ketika menambahkan story baru berhasil
+	1. Memastikan bahwa nilai actualResult tidak null
+	2. Memastikan bahwa nilai expectedResult.message sama dengan actualResult.message
+d. Ketika mendapatkan semua data story berhasil
+	1. Memastikan bahwa nilai actualResult tidak null
+	2. Memastikan bahwa nilai expectedResult.listStory.size sama dengan actualResult.listStory.size
+
+LoginViewModelTest
+1. Ketika melakukan login data tidak null
+2. Memastikan mengembalikan Result.Success
+
+RegisterViewModelTest
+1. Ketika melakukan register data tidak null
+2. Memastikan mengembalikan Result.Success
+
+UploadViewModelTest
+1. Ketika menambahkan story baru data tidak null
+2. Memastikan mengembalikan Result.Success
+
+StoryViewModelTest
+1. Memastikan data story tidak null
+2. Memastikan jumlah data sesuai yang diharapkan
+
+StoryWithMapsViewModel
+1. Memastikan data story tidak null
+2. Memastikan mengembalikan Result.Success

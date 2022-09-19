@@ -8,14 +8,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.Result
 import com.dicoding.storyapp.databinding.FragmentRegisterBinding
 import com.dicoding.storyapp.ui.login.LoginFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment(), View.OnClickListener {
@@ -53,39 +51,35 @@ class RegisterFragment : Fragment(), View.OnClickListener {
         val password = binding.edtPassword.editText?.text.toString().trim()
 
         if (validateAllFields(name, email, password)) {
-            lifecycleScope.launch {
-                registerViewModel.register(name, email, password).collect { result ->
-                    when (result) {
-                        is Result.Loading -> {
-                            binding.progressIndicator.visibility = View.VISIBLE
-                            binding.btnSubmit.isEnabled = false
-                        }
-                        is Result.Success -> {
-                            binding.progressIndicator.visibility = View.GONE
-                            binding.btnSubmit.isEnabled = true
+            registerViewModel.register(name, email, password).observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        binding.progressIndicator.visibility = View.VISIBLE
+                        binding.btnSubmit.isEnabled = false
+                    }
+                    is Result.Success -> {
+                        binding.progressIndicator.visibility = View.GONE
+                        binding.btnSubmit.isEnabled = true
 
-                            Toast.makeText(
-                                requireContext(),
-                                resources.getString(R.string.successful_registration_message),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        Toast.makeText(
+                            requireActivity(),
+                            resources.getString(R.string.successful_registration_message),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                            showLoginPage()
-                        }
-                        is Result.Error -> {
-                            binding.progressIndicator.visibility = View.GONE
-                            binding.btnSubmit.isEnabled = true
+                        showLoginPage()
+                    }
+                    is Result.Error -> {
+                        binding.progressIndicator.visibility = View.GONE
+                        binding.btnSubmit.isEnabled = true
 
-                            Snackbar.make(binding.root, result.error, Snackbar.LENGTH_LONG).show()
-                        }
+                        Snackbar.make(binding.root, result.error, Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
         }
     }
 
-    // Bagian kode yang ini mas.
-    // Kodenya saya rubah kembali ke sebelumnya
     private fun showLoginPage() {
         val fragmentManager = parentFragmentManager
         val loginFragment = LoginFragment()

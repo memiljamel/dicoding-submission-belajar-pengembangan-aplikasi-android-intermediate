@@ -60,10 +60,10 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
                 android:alpha="0.87"
-                android:text="@string/story_name"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="John Doe" />
 
             <TextView
                 android:id="@+id/tv_story_description"
@@ -71,10 +71,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:alpha="0.60"
-                android:text="@string/story_description"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:textStyle="normal" />
+                android:textStyle="normal"
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto asperiores consequatur consequuntur nam voluptas. Aliquam at culpa cupiditate debitis dicta earum neque non pariatur perferendis, quia. Consequatur dolorum laborum tenetur?" />
 
         </LinearLayout>
 

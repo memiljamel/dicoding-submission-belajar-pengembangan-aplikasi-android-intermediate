@@ -19,16 +19,17 @@
     <string name="error_required_photo_message">Please select a file.</string>
     <string name="error_required_description_message">The description field is required.</string>
     <string name="successful_registration_message">New account registration successful</string>
-    <string name="story_name">John Doe</string>
-    <string name="story_description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto asperiores consequatur consequuntur nam voluptas. Aliquam at culpa cupiditate debitis dicta earum neque non pariatur perferendis, quia. Consequatur dolorum laborum tenetur?</string>
     <string name="logout">Logout</string>
-    <string name="error_lottie_message">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</string>
+    <string name="stories">Stories</string>
+    <string name="retry">Coba lagi</string>
+    <string name="maps">Maps</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="hint_description">Description</string>
     <string name="upload">Upload</string>
     <string name="error_permission_message">Not getting permission</string>
     <string name="error_access_camera">Failed to bring up the camera</string>
+    <string name="error_access_location">Please activate your location services</string>
     <string name="error_take_picture">Failed to take a picture</string>
     <string name="successful_upload_message">New story added successfully</string>
 </resources>

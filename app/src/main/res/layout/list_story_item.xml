@@ -25,9 +25,9 @@
         android:layout_marginEnd="12dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/story_name"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="John Doe" />
 
 </LinearLayout>

@@ -8,15 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.Result
+import com.dicoding.storyapp.data.source.local.UserPreferences
 import com.dicoding.storyapp.databinding.FragmentLoginBinding
 import com.dicoding.storyapp.ui.home.HomeActivity
 import com.dicoding.storyapp.ui.register.RegisterFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(), View.OnClickListener {
@@ -52,38 +51,36 @@ class LoginFragment : Fragment(), View.OnClickListener {
         val email = binding.edtEmail.editText?.text.toString().trim()
         val password = binding.edtPassword.editText?.text.toString().trim()
 
+        val pref = UserPreferences(requireContext())
+
         if (validateAllFields(email, password)) {
-            lifecycleScope.launch {
-                loginViewModel.login(email, password).collect { result ->
-                    when (result) {
-                        is Result.Loading -> {
-                            binding.progressIndicator.visibility = View.VISIBLE
-                            binding.btnSubmit.isEnabled = false
-                        }
-                        is Result.Success -> {
-                            binding.progressIndicator.visibility = View.GONE
-                            binding.btnSubmit.isEnabled = true
+            loginViewModel.login(email, password).observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        binding.progressIndicator.visibility = View.VISIBLE
+                        binding.btnSubmit.isEnabled = false
+                    }
+                    is Result.Success -> {
+                        binding.progressIndicator.visibility = View.GONE
+                        binding.btnSubmit.isEnabled = true
 
-                            loginViewModel.saveBearerToken(result.data.loginResult.token)
+                        pref.setToken(result.data.loginResult.token)
 
-                            val homeActivity = Intent(requireActivity(), HomeActivity::class.java)
-                            startActivity(homeActivity)
-                            requireActivity().finish()
-                        }
-                        is Result.Error -> {
-                            binding.progressIndicator.visibility = View.GONE
-                            binding.btnSubmit.isEnabled = true
+                        val homeActivity = Intent(requireActivity(), HomeActivity::class.java)
+                        startActivity(homeActivity)
+                        requireActivity().finish()
+                    }
+                    is Result.Error -> {
+                        binding.progressIndicator.visibility = View.GONE
+                        binding.btnSubmit.isEnabled = true
 
-                            Snackbar.make(binding.root, result.error, Snackbar.LENGTH_SHORT).show()
-                        }
+                        Snackbar.make(binding.root, result.error, Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
         }
     }
 
-    // Bagian kode yang ini mas.
-    // Kodenya saya rubah kembali ke sebelumnya
     private fun showRegisterPage() {
         val fragmentManager = parentFragmentManager
         val registerFragment = RegisterFragment()

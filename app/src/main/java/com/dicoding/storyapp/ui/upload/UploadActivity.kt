@@ -14,10 +14,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.Result
+import com.dicoding.storyapp.data.source.local.UserPreferences
 import com.dicoding.storyapp.databinding.ActivityUploadBinding
 import com.dicoding.storyapp.ui.camera.CameraActivity
 import com.dicoding.storyapp.ui.home.HomeActivity
@@ -26,7 +26,6 @@ import com.dicoding.storyapp.utils.rotateBitmap
 import com.dicoding.storyapp.utils.uriToFile
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -92,7 +91,7 @@ class UploadActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun startCameraX() {
-        val cameraActivity = Intent(this@UploadActivity, CameraActivity::class.java)
+        val cameraActivity = Intent(this, CameraActivity::class.java)
         launcherIntentCameraX.launch(cameraActivity)
     }
 
@@ -129,7 +128,7 @@ class UploadActivity : AppCompatActivity(), View.OnClickListener {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             val selectedImg: Uri = result.data?.data as Uri
-            val myFile = uriToFile(selectedImg, this@UploadActivity)
+            val myFile = uriToFile(selectedImg, this)
 
             getFile = myFile
 
@@ -146,6 +145,9 @@ class UploadActivity : AppCompatActivity(), View.OnClickListener {
     private fun handleSubmit() {
         val description = binding.edtDescription.editText?.text.toString().trim()
 
+        val pref = UserPreferences(this)
+        val token = pref.getToken()
+
         if (validateAllFields(description)) {
             val file = reduceFileImage(getFile as File)
             val descriptionBody = description.toRequestBody("text/plain".toMediaType())
@@ -156,39 +158,33 @@ class UploadActivity : AppCompatActivity(), View.OnClickListener {
                 requestImageFile
             )
 
-            lifecycleScope.launch {
-                uploadViewModel.getBearerToken().collect { token ->
-                    uploadViewModel.addNewStory(token, descriptionBody, imageMultipart)
-                        .collect { result ->
-                            when (result) {
-                                is Result.Loading -> {
-                                    binding.progressIndicator.visibility = View.VISIBLE
-                                    binding.btnSubmit.isEnabled = false
-                                }
-                                is Result.Success -> {
-                                    binding.progressIndicator.visibility = View.GONE
-                                    binding.btnSubmit.isEnabled = true
+            uploadViewModel.addNewStory(token, descriptionBody, imageMultipart).observe(this) { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        binding.progressIndicator.visibility = View.VISIBLE
+                        binding.btnSubmit.isEnabled = false
+                    }
+                    is Result.Success -> {
+                        binding.progressIndicator.visibility = View.GONE
+                        binding.btnSubmit.isEnabled = true
 
-                                    Toast.makeText(
-                                        this@UploadActivity,
-                                        resources.getString(R.string.successful_upload_message),
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                        Toast.makeText(
+                            this,
+                            resources.getString(R.string.successful_upload_message),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                                    val homeActivity =
-                                        Intent(this@UploadActivity, HomeActivity::class.java)
-                                    startActivity(homeActivity)
-                                    finish()
-                                }
-                                is Result.Error -> {
-                                    binding.progressIndicator.visibility = View.GONE
-                                    binding.btnSubmit.isEnabled = true
+                        val homeActivity =
+                            Intent(this, HomeActivity::class.java)
+                        startActivity(homeActivity)
+                        finish()
+                    }
+                    is Result.Error -> {
+                        binding.progressIndicator.visibility = View.GONE
+                        binding.btnSubmit.isEnabled = true
 
-                                    Snackbar.make(binding.root, result.error, Snackbar.LENGTH_SHORT)
-                                        .show()
-                                }
-                            }
-                        }
+                        Snackbar.make(binding.root, result.error, Snackbar.LENGTH_LONG).show()
+                    }
                 }
             }
         }
@@ -196,10 +192,10 @@ class UploadActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun validateAllFields(description: String): Boolean {
         if (getFile == null) {
-            Snackbar.make(
-                binding.root,
+            Toast.makeText(
+                this,
                 resources.getString(R.string.error_required_photo_message),
-                Snackbar.LENGTH_SHORT
+                Toast.LENGTH_SHORT
             ).show()
             return false
         }

@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:menuCategory="container">
-        <item android:id="@+id/logout"
+        <item
+            android:id="@+id/logout"
             android:title="@string/logout"
             app:showAsAction="never" />
     </group>

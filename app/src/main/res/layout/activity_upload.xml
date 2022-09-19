@@ -19,7 +19,7 @@
             android:background="?attr/colorPrimary"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-            app:title="Upload Story" />
+            app:title="Upload New Story" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
